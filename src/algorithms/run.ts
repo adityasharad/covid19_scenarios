@@ -49,21 +49,21 @@ export function interpolateTimeSeries(containment: TimeSeries): (t: Date) => num
 }
 
 export function intervalsToTimeSeries(intervals: MitigationIntervals): TimeSeries {
-  const changePoints = {}
+  const changePoints: Record<string, [number]> = {}
   intervals.forEach((element) => {
     // bound the value by 0.01 and 100 (transmission can be at most 100 fold reduced or increased)
     const val = Math.min(Math.max(1 - element.mitigationValue * 0.01, 0.01), 100)
 
-    if (changePoints[element.timeRange.tMin] !== undefined) {
-      changePoints[element.timeRange.tMin].push(val)
+    if (changePoints[element.timeRange.tMin.toUTCString()] !== undefined){
+      changePoints[element.timeRange.tMin.toUTCString()].push(val)
     } else {
-      changePoints[element.timeRange.tMin] = [val]
+      changePoints[element.timeRange.tMin.toUTCString()] = [val]
     }
     // add inverse of the value when measure is relaxed
-    if (changePoints[element.timeRange.tMax] !== undefined) {
-      changePoints[element.timeRange.tMax].push(1.0 / val)
+    if (changePoints[element.timeRange.tMax.toUTCString()] !== undefined){
+      changePoints[element.timeRange.tMax.toUTCString()].push(1.0/val)
     } else {
-      changePoints[element.timeRange.tMax] = [1.0 / val]
+      changePoints[element.timeRange.tMax.toUTCString()] = [1.0/val]
     }
   })
 
