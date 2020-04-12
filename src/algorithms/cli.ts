@@ -1,5 +1,5 @@
 import { run, intervalsToTimeSeries } from './run'
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import { AllParamsFlat, AllParams } from './types/Param.types'
 import severityData from '../assets/data/severityData.json'
 import { SeverityTableRow } from '../components/Main/Scenario/SeverityTable'
@@ -42,6 +42,11 @@ async function main() {
     usage();
   }
   console.log(`Running model for region ${region}`);
+  const outputFile = process.argv[3];
+  if (!outputFile) {
+    usage();
+  }
+  console.log(`Writing output to ${outputFile}`);
   
   // This reads directly from scenarios.json and validates the JSON.
   let params: AllParams;
@@ -67,6 +72,7 @@ async function main() {
   const result = await run(paramsFlat, severity, ageDistribution, containment);
   console.log('Run complete');
   console.log(result);
+  writeFileSync(outputFile, JSON.stringify(result))
 }
 
 function usage() {
@@ -74,7 +80,7 @@ function usage() {
     `
 Usage:
 
-    cli <country>
+    cli <country> <output-file>
 
         Manually perform a single model run with the given input. Print the output to stdout.
 
