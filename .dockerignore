@@ -1,0 +1,11 @@
+/.build
+/.cache
+/.github
+/3rdparty
+/cypress
+/data
+/docker
+/infra
+/node_modules
+/src/.generated
+/static
