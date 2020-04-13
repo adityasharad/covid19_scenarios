@@ -53,17 +53,19 @@ export function intervalsToTimeSeries(intervals: MitigationIntervals): TimeSerie
   intervals.forEach((element) => {
     // bound the value by 0.01 and 100 (transmission can be at most 100 fold reduced or increased)
     const val = Math.min(Math.max(1 - element.mitigationValue * 0.01, 0.01), 100)
+    const tMin = new Date(element.timeRange.tMin).toString();
+    const tMax = new Date(element.timeRange.tMax).toString();
 
-    if (changePoints[element.timeRange.tMin.toUTCString()] !== undefined){
-      changePoints[element.timeRange.tMin.toUTCString()].push(val)
+    if (changePoints[tMin] !== undefined){
+      changePoints[tMin].push(val)
     } else {
-      changePoints[element.timeRange.tMin.toUTCString()] = [val]
+      changePoints[tMin] = [val]
     }
     // add inverse of the value when measure is relaxed
-    if (changePoints[element.timeRange.tMax.toUTCString()] !== undefined){
-      changePoints[element.timeRange.tMax.toUTCString()].push(1.0/val)
+    if (changePoints[tMax] !== undefined){
+      changePoints[tMax].push(1.0/val)
     } else {
-      changePoints[element.timeRange.tMax.toUTCString()] = [1.0/val]
+      changePoints[tMax] = [1.0/val]
     }
   })
 
