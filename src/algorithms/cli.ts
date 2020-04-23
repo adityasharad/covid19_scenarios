@@ -1,10 +1,8 @@
 import { run, intervalsToTimeSeries } from './run'
 import { readFileSync, writeFileSync } from 'fs'
-import { AllParamsFlat, AllParams } from './types/Param.types'
+import { AllParamsFlat } from './types/Param.types'
 import severityData from '../assets/data/severityData.json'
 import { SeverityTableRow } from '../components/Main/Scenario/ScenarioTypes'
-import { TimeSeries } from './types/TimeSeries.types'
-import { getScenarioData } from '../components/Main/state/scenarioData'
 import { getCountryAgeDistribution } from '../components/Main/state/countryAgeDistributionData'
 import { Scenario } from '../.generated/types'
 
@@ -44,20 +42,20 @@ async function main() {
   }
   console.log(`Writing output to ${outputFile}`);
 
-  const params = scenario.allParams;
-  const paramsFlat: AllParamsFlat = {
-    ...params.population,
-    ...params.epidemiological,
-    ...params.simulation,
-    ...params.containment,
+  const allParams = scenario.allParams;
+  const params: AllParamsFlat = {
+    ...allParams.population,
+    ...allParams.epidemiological,
+    ...allParams.simulation,
+    ...allParams.containment,
   }
   // This reads directly from severityData.json.
   const severity = severityData as SeverityTableRow[];
   // This reads directly from country_age_distribution.json and validates the JSON.
-  const ageDistribution = getCountryAgeDistribution(params.population.country);
+  const ageDistribution = getCountryAgeDistribution(allParams.population.country);
   // This reads containment info from the scenario.
-  const containment = intervalsToTimeSeries(params.containment.mitigationIntervals);
-  const result = await run(paramsFlat, severity, ageDistribution, containment);
+  const containment = intervalsToTimeSeries(allParams.containment.mitigationIntervals);
+  const result = await run(params, severity, ageDistribution, containment);
   console.log('Run complete');
   console.log(result);
   writeFileSync(outputFile, JSON.stringify(result))
