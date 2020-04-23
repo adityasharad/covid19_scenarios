@@ -15,6 +15,17 @@ tsv-data:
 	python3 generate_data.py \
 		--fetch
 
+recalculated-fits:
+	python3 generate_data.py \
+		--recalculate \
+		--num-threads 10 \
+		--output-scenarios ../src/assets/data/scenarios/scenarios.json \
+		--output-cases ../src/assets/data/case_counts.json
+
+population:
+	python3 generate_data.py \
+		--output-population populationData.tsv
+
 data-for-app:
 	python3 generate_data.py \
 		--output-scenarios ../src/assets/data/scenarios/scenarios.json \
